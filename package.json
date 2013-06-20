@@ -1,0 +1,16 @@
+{
+  "name": "grunt-zip",
+  "version": "0.0.1",
+  "description": "zip file generation from grunt",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": "",
+  "author": "",
+  "license": "Apache v2",
+  "dependencies": {
+    "async": "~0.2.9",
+    "node-native-zip": "~1.1.0"
+  }
+}
