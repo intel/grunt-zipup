@@ -1,6 +1,7 @@
 module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-contrib-jshint');
+  grunt.loadNpmTasks('grunt-release');
   grunt.loadNpmTasks('grunt-mochaccino');
   grunt.loadTasks('tasks');
 
@@ -34,6 +35,22 @@ module.exports = function (grunt) {
         trailing: true,
         maxdepth: 2,
         newcap: false
+      }
+    },
+
+    release: {
+      options: {
+        add: false,
+        commit: false,
+        push: false,
+
+        bump: true,
+        tag: true,
+        pushTags: true,
+        npm: true,
+        folder: '.',
+        tagName: '<%= version %>',
+        tagMessage: 'Version <%= version %>'
       }
     },
 
