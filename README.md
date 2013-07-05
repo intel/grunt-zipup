@@ -63,7 +63,7 @@ type: string, mandatory
 
 Application version.
 
-#### suffix
+### suffix
 
 type: string, default: 'zip'
 
