@@ -3,13 +3,13 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-mochaccino');
   grunt.loadTasks('tasks');
 
-  // these tasks are used to test _this_ plugin
   grunt.initConfig({
+    // these tasks are used to test _this_ plugin
     clean: ['build'],
 
     zipup: {
       tizen_tiny_app_wgt: {
-        appName: 'app',
+        appName: 'tizen-tiny-app',
         suffix: 'wgt',
         version: '0.1.0',
         files: 'test/fixtures/tizen-tiny-app/**',

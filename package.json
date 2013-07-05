@@ -26,11 +26,12 @@
   },
   "dependencies": {
     "async": "~0.2.9",
-    "node-native-zip": "~1.1.0"
+    "adm-zip": "~0.4.3"
   },
   "devDependencies": {
     "grunt-contrib-clean": "~0.4.1",
     "grunt-mochaccino": "~0.1.2",
-    "chai": "~1.7.2"
+    "chai": "~1.7.2",
+    "glob": "~3.2.1"
   }
 }

@@ -10,7 +10,7 @@ module.exports = function (grunt) {
   var path = require('path');
   var fs = require('fs');
   var async = require('async');
-  var Zip = require('node-native-zip');
+  var AdmZip = require('adm-zip');
 
   /**
   * Create a zip file with a customisable filename.
@@ -158,7 +158,7 @@ module.exports = function (grunt) {
     };
 
     var packFiles = function (outfile, infiles, cb) {
-      var zipfile = new Zip();
+      var zipfile = new AdmZip();
       var buffer;
 
       async.forEachSeries(
@@ -171,7 +171,7 @@ module.exports = function (grunt) {
 
             buffer = fs.readFileSync(file);
 
-            zipfile.add(filename, buffer);
+            zipfile.addFile(filename, buffer);
 
             next();
           }
@@ -183,8 +183,8 @@ module.exports = function (grunt) {
           // TODO catch err
 
           grunt.log.writeln('\npackage written to:\n' + outfile);
-          buffer = zipfile.toBuffer();
-          fs.writeFile(outfile, buffer, cb);
+          zipfile.writeZip(outfile);
+          cb();
         }
       );
     };
