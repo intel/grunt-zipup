@@ -1,10 +1,43 @@
 module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-contrib-clean');
+  grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-mochaccino');
   grunt.loadTasks('tasks');
 
   grunt.initConfig({
-    // these tasks are used to test _this_ plugin
+    jshint: {
+      all: ['tasks/**'],
+
+      // see http://jshint.com/docs/
+      options: {
+        camelcase: true,
+        curly: true,
+        eqeqeq: true,
+        forin: true,
+        immed: true,
+        indent: 2,
+        noempty: true,
+        quotmark: 'single',
+
+        undef: true,
+        globals: {
+          'require': false,
+          'module': false,
+          'process': false,
+          '__dirname': false,
+          'console': false
+        },
+
+        unused: true,
+        browser: true,
+        strict: true,
+        trailing: true,
+        maxdepth: 2,
+        newcap: false
+      }
+    },
+
+    // the tasks below are used to test _this_ plugin
     clean: ['build'],
 
     zipup: {
@@ -26,11 +59,10 @@ module.exports = function (grunt) {
     }
   });
 
-  grunt.registerTask('test', [
+  grunt.registerTask('default', [
+    'jshint',
     'clean',
     'zipup',
     'mochaccino:all'
   ]);
-
-  grunt.registerTask('default', 'test');
 };

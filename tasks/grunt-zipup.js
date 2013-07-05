@@ -7,6 +7,8 @@
  *
  */
 module.exports = function (grunt) {
+  'use strict';
+
   var path = require('path');
   var fs = require('fs');
   var async = require('async');
@@ -66,8 +68,8 @@ module.exports = function (grunt) {
       var gitCommitId = function (receiver) {
         grunt.util.spawn(
           {
-            cmd: "git",
-            args: ["log", "-n1", "--format=format:'%h'"]
+            cmd: 'git',
+            args: ['log', '-n1', '--format=format:\'%h\'']
           },
 
           function (err, result) {
@@ -133,7 +135,7 @@ module.exports = function (grunt) {
           outFile += '_git@' + result;
         }
 
-        outFile += '_' + grunt.template.today("yyyy-mm-dd_HHMMss");
+        outFile += '_' + grunt.template.today('yyyy-mm-dd_HHMMss');
 
         if (identifier) {
           outFile += '_' + identifier;
