@@ -36,8 +36,9 @@ module.exports = function (grunt) {
   *   addGitCommitId - if the project is a git repo, this includes the
   *                    8 character variant of the last commit ID as
   *                    part of the filename, e.g.
-  *                    app_git@81a131a2_2012-11-01_1151.zip
-  *                    (default: false)
+  *                    app_git@81a131a2_2012-11-01_1151.zip;
+  *                    NB this requires that the "git" command be in
+  *                    your path (default: false)
   *
   * Example configuration:
   *
