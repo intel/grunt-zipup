@@ -179,12 +179,15 @@ module.exports = function (grunt) {
             next();
           }
         },
-        function (err, result) {
-          // TODO catch err
-
-          grunt.log.writeln('\npackage written to:\n' + outfile);
-          zipfile.writeZip(outfile);
-          cb();
+        function (err) {
+          if (err) {
+            grunt.fatal(err.message);
+          }
+          else {
+            grunt.log.writeln('\npackage written to:\n' + outfile);
+            zipfile.writeZip(outfile);
+            cb();
+          }
         }
       );
     };
