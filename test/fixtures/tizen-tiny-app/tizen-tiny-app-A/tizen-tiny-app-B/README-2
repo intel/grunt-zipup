@@ -1,0 +1,8 @@
+The smallest app which counts as a valid Tizen app.
+
+It provides a benchmark for measuring other apps against, as
+it sets the lower limit on how fast a Tizen app can run: every other
+app is going to be slower than this one, as it has nothing in it.
+
+Note that it loads a single JS file, to provide some semblance of
+realism.
