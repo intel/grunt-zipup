@@ -17,8 +17,6 @@ configuration).
 
 # zipup task
 
-## Options
-
 Note that it can be useful to set some of the zipup options from your <em>package.json</em>. For example, your <em>Gruntfile.js</em> might look like this:
 
     grunt.initConfig({
@@ -40,6 +38,8 @@ Note that it can be useful to set some of the zipup options from your <em>packag
         }
       }
     });
+
+## Options
 
 ### appName
 
