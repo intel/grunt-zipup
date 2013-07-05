@@ -43,7 +43,7 @@ module.exports = function (grunt) {
   * Example configuration:
   *
   * grunt.initConfig({
-  *   package: {
+  *   zipup: {
   *     wgt: {
   *       appName: 'app',
   *       suffix: 'wgt',
@@ -78,14 +78,14 @@ module.exports = function (grunt) {
   * grunt.registerTask('pkg', 'create package', function (identifier) {
   *    // ...do other tasks here, e.g. minify and copy files for distribution...
   *
-  *    var packageTask = (identifier ? 'package:' + identifier : 'package');
+  *    var packageTask = (identifier ? 'zipup:' + identifier : 'zipup');
   *    grunt.task.run(packageTask);
   *  });
   *
   * then call it with pkg:TEST, where TEST is the string
   * you want to append to the output filename.
   */
-  grunt.registerMultiTask('zip', 'Zip files with custom zipfile name', function (identifier) {
+  grunt.registerMultiTask('zipup', 'Zip files with custom zipfile name', function (identifier) {
     var appName = this.data.appName;
     var version = this.data.version;
     var files = this.data.files;
