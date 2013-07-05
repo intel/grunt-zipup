@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# This script generates a widget package k9.wgt inside
+# This script generates a widget package inside
 # the root directory of this project.
 
 FILE_NAME=$1

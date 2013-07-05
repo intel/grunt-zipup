@@ -7,24 +7,5 @@ app is going to be slower than this one, as it has nothing in it.
 Note that it loads a single JS file, to provide some semblance of
 realism.
 
-***
-Web page timing on laptop Chrome
-
-DOMContentLoaded: 3ms
-onload: 3ms
-
-***
-Web page timing on pr3 wrt:
-
-DOMContentLoaded: 37ms
-onload: 38ms
-
-***
-Command-line timing from a pr3
-
-sh-4.1# time wrt-launcher -s tztinyapp0._H
-result: launched
-
-real	0m0.202s
-user	0m0.110s
-sys	0m0.020s
+Note that this isn't the full application and probably won't work
+if you try to make it.
