@@ -15,30 +15,29 @@ module.exports = function (grunt) {
   /**
   * Create a zip file with a customisable filename.
   *
-  * Deps: node-native-zip, async
-  *
   * Format of the output filename is:
   *
   *   <appName>_<version>_git@<commitID>_YYYY-MM-DD_HHMMSS_<suffix>.zip
   *
-  * The git, version and suffix parts are optional (see below for
+  * The git and suffix parts are optional (see below for
   * configuration).
   *
   * Configuration options:
   *
   *   appName - the name of the application; used as the base filename
-  *   files - glob of files to zip TODO allow array of globs
-  *   suffix - zip file suffix (default 'zip')
-  *   outDir - output directory to put the zipfile into
-  *   version - application version
+  *             (required)
+  *   files - glob of files to zip; TODO allow array of globs (required)
+  *   version - application version (required)
+  *   suffix - zip file suffix (default: 'zip')
+  *   outDir - output directory to put the zipfile into (default: '.')
   *   stripPrefix - if dir has a folder hierarchy inside it, specify
   *                 the prefix to strip from all paths, to remove
-  *                 the embedded folders (default = '')
+  *                 the embedded folders (default: '')
   *   addGitCommitId - if the project is a git repo, this includes the
   *                    8 character variant of the last commit ID as
   *                    part of the filename, e.g.
   *                    app_git@81a131a2_2012-11-01_1151.zip
-  *                    (default = false)
+  *                    (default: false)
   *
   * Example configuration:
   *
@@ -66,7 +65,7 @@ module.exports = function (grunt) {
   * A pre-suffix is added if you pass an identifier string to this task
   * when calling it, e.g.
   *
-  *   grunt package:TEST
+  *   grunt pkg:TEST
   *
   * will produce an output file with name like
   *
@@ -78,8 +77,8 @@ module.exports = function (grunt) {
   * grunt.registerTask('pkg', 'create package', function (identifier) {
   *    // ...do other tasks here, e.g. minify and copy files for distribution...
   *
-  *    var packageTask = (identifier ? 'zipup:' + identifier : 'zipup');
-  *    grunt.task.run(packageTask);
+  *    var zipupTask = (identifier ? 'zipup:' + identifier : 'zipup');
+  *    grunt.task.run(zipupTask);
   *  });
   *
   * then call it with pkg:TEST, where TEST is the string
@@ -89,6 +88,19 @@ module.exports = function (grunt) {
     var appName = this.data.appName;
     var version = this.data.version;
     var files = this.data.files;
+
+    if (!appName) {
+      grunt.fatal('zipup task requires appName argument');
+    }
+
+    if (!version) {
+      grunt.fatal('zipup task requires version argument (x.x.x)');
+    }
+
+    if (!files) {
+      grunt.fatal('zipup task requires files argument (directory to zip)');
+    }
+
     var suffix = this.data.suffix || 'zip';
     var outDir = this.data.outDir || '.';
     var addGitCommitId = !!this.data.addGitCommitId;
@@ -97,18 +109,7 @@ module.exports = function (grunt) {
     var stripPrefix = this.data.stripPrefix || '';
     stripPrefix = new RegExp('^' + stripPrefix);
 
-    if (!appName) {
-      grunt.fatal('package task requires appName argument');
-    }
-
-    if (!version) {
-      grunt.fatal('package task requires version argument (x.x.x)');
-    }
-
-    if (!files) {
-      grunt.fatal('package task requires dir argument (directory to zip)');
-    }
-
+    // main
     files = grunt.file.expand(files);
 
     var done = this.async();
@@ -168,6 +169,8 @@ module.exports = function (grunt) {
           }
         },
         function (err, result) {
+          // TODO catch err
+
           grunt.log.writeln('\npackage written to:\n' + outfile);
           buffer = zipfile.toBuffer();
           fs.writeFile(outfile, buffer, cb);
@@ -204,5 +207,4 @@ module.exports = function (grunt) {
       receiver(false, null);
     }
   });
-
 };
