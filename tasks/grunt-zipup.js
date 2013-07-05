@@ -109,6 +109,17 @@ module.exports = function (grunt) {
     var stripPrefix = this.data.stripPrefix || '';
     stripPrefix = new RegExp('^' + stripPrefix);
 
+    // ensure outDir exists and make it if not
+    if (grunt.file.exists(outDir)) {
+      if (!grunt.file.isDir(outDir)) {
+        grunt.fatal('cannot use ' + outDir + ' as outDir because ' +
+                    'file already exists and is not a directory');
+      }
+    }
+    else {
+      grunt.file.mkdir(outDir);
+    }
+
     // main
     files = grunt.file.expand(files);
 
