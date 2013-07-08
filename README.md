@@ -189,7 +189,11 @@ New features or bug fixes are welcome, and should be submitted as a pull request
 
 Please note that any changes you make should be accompanied by tests and documentation, and should not break the existing tests. You should also ensure that you run the <code>grunt jshint</code> task before submitting, to ensure that your code is lint free.
 
-Note that the tests for the project require grunt-mochaccino to run, which in turn requires a global installation of mocha:
+Note that the tests for the project require grunt-mochaccino to run. Install it and its dependencies the usual way:
+
+    npm install .
+
+grunt-mochaccino requires a global installation of mocha:
 
     npm install -g mocha
 
