@@ -133,7 +133,7 @@ The default for this is:
     '{{#gitCommit}}' +
     'git@{{gitCommit}}_' +
     '{{/gitCommit}}' +
-    '{{datetime}}{{identifier}}.{{suffix}}';
+    '{{datetime}}{{identifier}}.{{suffix}}'
 
 The data interpolated into the template string comes from the options for the zipup task (including any default values if the options aren't set). This means that it is possible to add extra data into the filename simply by adding new properties to a task configuration.
 
