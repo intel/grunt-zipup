@@ -90,6 +90,30 @@ module.exports = function (grunt) {
           { src: 'test/fixtures/specific-files/app/src/test4.js' }
         ],
         outDir: 'build'
+      },
+
+      commit_id: {
+        appName: 'commit-id',
+        version: '0.3.0',
+        addGitCommitId: true,
+        files: [
+          { src: 'test/fixtures/specific-files/**', expand: true }
+        ],
+        outDir: 'build'
+      },
+
+      custom_dest: {
+        appName: 'custom-dest',
+        version: '0.4.0',
+        files: [
+          {
+            cwd: 'test/fixtures/specific-files/app',
+            src: '**',
+            expand: true,
+            dest: 'custom_dest_app'
+          }
+        ],
+        outDir: 'build'
       }
     },
 
