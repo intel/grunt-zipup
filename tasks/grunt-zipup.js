@@ -12,141 +12,157 @@ module.exports = function (grunt) {
   var path = require('path');
   var fs = require('fs');
   var async = require('async');
+  var Mustache = require('mustache');
   var AdmZip = require('adm-zip');
+
+  // get the latest commit ID as an 8-character string;
+  // if not a git repo, returns '' and logs an error;
+  // receiver is a function with the signature receiver(err, result),
+  // where err is null if no error occurred and result is the commit ID
+  var gitCommitId = function (cb) {
+    grunt.util.spawn(
+      {
+        cmd: 'git',
+        args: ['log', '-n1', '--format=format:\'%h\'']
+      },
+
+      function (err, result) {
+        if (err) {
+          cb(err);
+        }
+        else {
+          cb(null, result.stdout.replace(/'/g, ''));
+        }
+      }
+    );
+  };
+
+  // returns true if path exists and is not a directory
+  var isFile = function (path) {
+    if (!fs.existsSync(path) || fs.statSync(path).isDirectory()) {
+      return false;
+    }
+
+    return true;
+  };
+
+  // infiles is a grunt files object: an array with objects
+  // which map from src to dest
+  var packFiles = function (data, files, cb) {
+    var outDir = data.outDir;
+    var zipfilename = Mustache.render(data.template, data);
+    var outfile = path.join(outDir, zipfilename);
+    var zipfile = new AdmZip();
+
+    async.each(
+      files,
+      function (file, next) {
+        var src = file.src[0];
+        var dest = file.dest || src;
+
+        if (isFile(src)) {
+          grunt.log.writeln('adding ' + src + ' to package as ' + dest);
+
+          var buffer = fs.readFileSync(src);
+
+          zipfile.addFile(dest, buffer);
+
+          next();
+        }
+        else {
+          next();
+        }
+      },
+      function (err) {
+        if (err) {
+          grunt.fatal(err.message);
+        }
+        else {
+          grunt.log.writeln('\npackage written to:\n' + outfile);
+          zipfile.writeZip(outfile);
+          cb();
+        }
+      }
+    );
+  };
 
   // zipup task definition; see the README.md file for options
   grunt.registerMultiTask(
     'zipup',
     'Zip files with custom zipfile name',
     function (identifier) {
-      var appName = this.data.appName;
-      var version = this.data.version;
+      // default template for the filename
+      var defaultTemplate = '{{appName}}_{{version}}_' +
+                            '{{#gitCommit}}' +
+                            'git@{{gitCommit}}_' +
+                            '{{/gitCommit}}' +
+                            '{{datetime}}{{identifier}}.{{suffix}}';
 
-      if (!appName) {
-        grunt.fatal('zipup task requires appName argument');
-      }
+      var done = this.async();
 
-      if (!version) {
-        grunt.fatal('zipup task requires version argument (x.x.x)');
-      }
+      // set defaults for task options if not present
+      var data = this.data;
 
-      var suffix = this.data.suffix || 'zip';
-      var outDir = this.data.outDir || '.';
-      var addGitCommitId = !!this.data.addGitCommitId;
+      data.identifier = (identifier ? '_' + identifier : '');
+
+      data.datetime = data.datetime ||
+                      grunt.template.today('yyyy-mm-dd_HHMMss');
+
+      data.suffix = data.suffix || 'zip';
+      data.suffix = data.suffix.replace(/^\./, '');
+
+      data.outDir = data.outDir || '.';
+      data.addGitCommitId = !!data.addGitCommitId;
 
       // files to be added
       var files = this.files;
 
       // ensure outDir exists and make it if not
-      if (grunt.file.exists(outDir)) {
-        if (!grunt.file.isDir(outDir)) {
-          grunt.fatal('cannot use ' + outDir + ' as outDir because ' +
+      if (grunt.file.exists(data.outDir)) {
+        if (!grunt.file.isDir(data.outDir)) {
+          grunt.fatal('cannot use ' + data.outDir + ' as outDir because ' +
                       'file already exists and is not a directory');
         }
       }
       else {
-        grunt.file.mkdir(outDir);
+        grunt.file.mkdir(data.outDir);
       }
 
-      var done = this.async();
+      // use custom template if defined; NB if this is the case, it's up to
+      // the user to ensure that all the required data is present in
+      // the zipup task configuration
+      // if no custom template set, use the default one
+      if (!data.template) {
+        // make sure the default template has the data it needs
+        if (!data.appName) {
+          grunt.fatal('zipup task requires appName argument');
+        }
 
-      var outFile = appName;
+        if (!data.version) {
+          grunt.fatal('zipup task requires version argument (x.x.x)');
+        }
 
-      // get the latest commit ID as an 8-character string;
-      // if not a git repo, returns '' and logs an error;
-      // receiver is a function with the signature receiver(err, result),
-      // where err is null if no error occurred and result is the commit ID
-      var gitCommitId = function (receiver) {
-        grunt.util.spawn(
-          {
-            cmd: 'git',
-            args: ['log', '-n1', '--format=format:\'%h\'']
-          },
+        // data is OK, so set template to the default
+        data.template = defaultTemplate;
+      }
 
-          function (err, result) {
-            if (err) {
-              receiver(true, '');
-            }
-            else {
-              receiver(null, result.stdout.replace(/'/g, ''));
-            }
+      // do we want to use the git commit ID in the template?
+      if (data.addGitCommitId) {
+        // add the git commit data before generating filename
+        gitCommitId(function (err, commit) {
+          if (err) {
+            done(err);
           }
-        );
-      };
-
-      var isFile = function (path) {
-        if (!fs.existsSync(path) || fs.statSync(path).isDirectory()) {
-          return false;
-        }
-
-        return true;
-      };
-
-      // infiles is a grunt files object: an array with objects
-      // which map from src to dest
-      var packFiles = function (outfile, infiles, cb) {
-        var zipfile = new AdmZip();
-        var buffer;
-
-        async.forEachSeries(
-          infiles,
-          function (file, next) {
-            var src = file.src[0];
-            var dest = file.dest || src;
-
-            if (isFile(src)) {
-              grunt.log.writeln('adding ' + src + ' to package as ' + dest);
-
-              buffer = fs.readFileSync(src);
-
-              zipfile.addFile(dest, buffer);
-
-              next();
-            }
-            else {
-              next();
-            }
-          },
-          function (err) {
-            if (err) {
-              grunt.fatal(err.message);
-            }
-            else {
-              grunt.log.writeln('\npackage written to:\n' + outfile);
-              zipfile.writeZip(outfile);
-              cb();
-            }
+          else {
+            data.gitCommit = commit;
+            packFiles(data, files, done);
           }
-        );
-      };
-
-      var receiver = function (err, result) {
-        if (version) {
-          outFile += '_' + version;
-        }
-
-        if (result) {
-          outFile += '_git@' + result;
-        }
-
-        outFile += '_' + grunt.template.today('yyyy-mm-dd_HHMMss');
-
-        if (identifier) {
-          outFile += '_' + identifier;
-        }
-
-        outFile += '.' + suffix.replace(/^\./, '');
-        outFile = path.join(outDir, outFile);
-
-        packFiles(outFile, files, done);
-      };
-
-      // append git commit ID to the package name
-      if (addGitCommitId) {
-        gitCommitId(receiver);
+        });
       }
       else {
-        receiver(false, null);
+        // set an empty git commit ID
+        data.gitCommit = null;
+        packFiles(data, files, done);
       }
     }
   );
