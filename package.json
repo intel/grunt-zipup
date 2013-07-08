@@ -26,7 +26,8 @@
   },
   "dependencies": {
     "async": "~0.2.9",
-    "adm-zip": "~0.4.3"
+    "adm-zip": "~0.4.3",
+    "mustache": "~0.7.2"
   },
   "devDependencies": {
     "grunt-contrib-clean": "~0.4.1",

@@ -6,13 +6,13 @@
  * http://www.apache.org/licenses/LICENSE-2.0
  *
  */
-
 module.exports = function (grunt) {
   'use strict';
 
   var path = require('path');
   var fs = require('fs');
   var async = require('async');
+  var Mustache = require('mustache');
   var AdmZip = require('adm-zip');
 
   // get the latest commit ID as an 8-character string;
@@ -48,8 +48,9 @@ module.exports = function (grunt) {
 
   // infiles is a grunt files object: an array with objects
   // which map from src to dest
-  var packFiles = function (outDir, template, data, files, cb) {
-    var zipfilename = grunt.template.process(template, {data: data});
+  var packFiles = function (data, files, cb) {
+    var outDir = data.outDir;
+    var zipfilename = Mustache.render(data.template, data);
     var outfile = path.join(outDir, zipfilename);
     var zipfile = new AdmZip();
 
@@ -90,71 +91,63 @@ module.exports = function (grunt) {
     'zipup',
     'Zip files with custom zipfile name',
     function (identifier) {
-      var done = this.async();
-      identifier = (identifier ? '_' + identifier : '');
-
       // default template for the filename
-      var defaultTemplate = '<%= appName %>_<%= version %>_' +
-                            '<% if (gitCommit) { %>' +
-                            'git@<%= gitCommit %>_' +
-                            '<% } %>' +
-                            '<%= datetime %><%= identifier %>.<%= suffix %>';
+      var defaultTemplate = '{{appName}}_{{version}}_' +
+                            '{{#gitCommit}}' +
+                            'git@{{gitCommit}}_' +
+                            '{{/gitCommit}}' +
+                            '{{datetime}}{{identifier}}.{{suffix}}';
 
-      // pick data out of the task options and set defaults if not present
-      var appName = this.data.appName;
-      var version = this.data.version;
+      var done = this.async();
 
-      var suffix = this.data.suffix || 'zip';
-      suffix = suffix.replace(/^\./, '');
+      // set defaults for task options if not present
+      var data = this.data;
 
-      var outDir = this.data.outDir || '.';
-      var addGitCommitId = !!this.data.addGitCommitId;
+      data.identifier = (identifier ? '_' + identifier : '');
+
+      data.datetime = data.datetime ||
+                      grunt.template.today('yyyy-mm-dd_HHMMss');
+
+      data.suffix = data.suffix || 'zip';
+      data.suffix = data.suffix.replace(/^\./, '');
+
+      data.outDir = data.outDir || '.';
+      data.addGitCommitId = !!data.addGitCommitId;
 
       // files to be added
       var files = this.files;
 
       // ensure outDir exists and make it if not
-      if (grunt.file.exists(outDir)) {
-        if (!grunt.file.isDir(outDir)) {
-          grunt.fatal('cannot use ' + outDir + ' as outDir because ' +
+      if (grunt.file.exists(data.outDir)) {
+        if (!grunt.file.isDir(data.outDir)) {
+          grunt.fatal('cannot use ' + data.outDir + ' as outDir because ' +
                       'file already exists and is not a directory');
         }
       }
       else {
-        grunt.file.mkdir(outDir);
+        grunt.file.mkdir(data.outDir);
       }
 
       // use custom template if defined; NB if this is the case, it's up to
       // the user to ensure that all the required data is present in
       // the zipup task configuration
-      var template = this.data.template;
-
       // if no custom template set, use the default one
-      if (!template) {
+      if (!data.template) {
         // make sure the default template has the data it needs
-        if (!appName) {
+        if (!data.appName) {
           grunt.fatal('zipup task requires appName argument');
         }
 
-        if (!version) {
+        if (!data.version) {
           grunt.fatal('zipup task requires version argument (x.x.x)');
         }
 
         // data is OK, so set template to the default
-        template = defaultTemplate;
+        data.template = defaultTemplate;
       }
 
-      // data to put into the template
-      var data = {
-        appName: appName,
-        version: version,
-        suffix: suffix,
-        identifier: identifier,
-        datetime: grunt.template.today('yyyy-mm-dd_HHMMss')
-      };
-
       // do we want to use the git commit ID in the template?
-      if (addGitCommitId) {
+      if (data.addGitCommitId) {
         // add the git commit data before generating filename
         gitCommitId(function (err, commit) {
           if (err) {
@@ -162,14 +155,14 @@ module.exports = function (grunt) {
           }
           else {
             data.gitCommit = commit;
-            packFiles(outDir, template, data, files, done);
+            packFiles(data, files, done);
           }
         });
       }
       else {
         // set an empty git commit ID
         data.gitCommit = null;
-        packFiles(outDir, template, data, files, done);
+        packFiles(data, files, done);
       }
     }
   );

@@ -114,6 +114,19 @@ module.exports = function (grunt) {
           }
         ],
         outDir: 'build'
+      },
+
+      custom_template: {
+        appName: 'custom-template',
+        version: '0.5.0',
+        datetime: grunt.template.today('yyyymm'),
+        addGitCommitId: true,
+        outDir: 'build',
+        template: '{{appName}}_{{version}}_{{datetime}}_git@{{gitCommit}}_{{purpose}}.zip',
+        purpose: 'QA',
+        files: [
+          { src: 'test/fixtures/specific-files/**', expand: true }
+        ]
       }
     },
 
