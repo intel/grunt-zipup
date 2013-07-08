@@ -78,6 +78,18 @@ module.exports = function (grunt) {
           }
         ],
         outDir: 'build'
+      },
+
+      specific_files: {
+        appName: 'specific-files',
+        version: '0.2.0',
+        files: [
+          { src: 'test/fixtures/specific-files/app/lib/test1.js' },
+          { src: 'test/fixtures/specific-files/app/lib/test2.js' },
+          { src: 'test/fixtures/specific-files/app/src/test3.js' },
+          { src: 'test/fixtures/specific-files/app/src/test4.js' }
+        ],
+        outDir: 'build'
       }
     },
 
