@@ -186,7 +186,11 @@ Note that it can be useful to set some of the zipup options from your <em>packag
 
       // ... more config ...
 
-      zipup: {
+      zipup: {'{{appName}}_{{version}}_' +
+    '{{#gitCommit}}' +
+    'git@{{gitCommit}}_' +
+    '{{/gitCommit}}' +
+    '{{datetime}}{{identifier}}.{{suffix}}'
         wgt: {
           // set appName and version from package.json
           appName: '<%= packageInfo.name %>',
@@ -208,9 +212,40 @@ Note that it can be useful to set some of the zipup options from your <em>packag
 
 ## Using an identifier
 
-TODO
+To customise the output filename at runtime, you can pass an extra parameter to a zipup task when you invoke it. This extra parameter is added into the default template for the output filename, just before the file suffix.
 
-# Full example
+For example, if a task is configured like this:
+
+    zipup: {
+      package: {
+        appName: 'myapp',
+        version: '0.1.0'
+      }
+    }
+
+and you run that task with:
+
+    grunt zipup:package:FONT-CHANGES
+
+you will produce a package with a name like:
+
+    app_0.1.0_2013-07-08_162941_FONT-CHANGES.zip
+
+This can be useful to add on-the-fly explanations to a package name which don't really have a place in the main task configuration.
+
+You can also provide a place for the identifier in your own custom template:
+
+    zipup: {
+      package: {
+        appName: 'myapp',
+        version: '0.1.0',
+        template: '{{appName}}_{{version}}{{identifier}}.zip'
+      }
+    }
+
+In situations where you don't supply an identifier, it is set to the empty string '' by default. If you do provide an identifier, it is automatically prefixed with '_', so you don't need to put that in your template.
+
+# Annotated example
 
     grunt.initConfig({
       zipup: {
@@ -249,9 +284,9 @@ Please log issues on the [github issue tracker](https://github.com/01org/grunt-z
 
 New features or bug fixes are welcome, and should be submitted as a pull request against the <em>master</em> branch of the project.
 
-Please note that any changes you make should be accompanied by tests and documentation, and should not break the existing tests. You should also ensure that you run the <code>grunt jshint</code> task before submitting, to ensure that your code is lint free.
+You should ensure that you run the <code>grunt jshint</code> task before submitting, to ensure that your code is lint free.
 
-Note that the tests for the project require grunt-mochaccino to run. Install it and its dependencies the usual way:
+Also note that any changes you make should be accompanied by tests and documentation, and should not break the existing tests. The tests for the project require grunt-mochaccino to run. Install it and its dependencies the usual way:
 
     npm install .
 
