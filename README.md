@@ -16,7 +16,7 @@ grunt-zipup has been tested on:
 
 You need **Grunt ~0.4.1**.
 
-Next, install the grunt-zipup plugin in your project with:
+Install the grunt-zipup plugin in your project with:
 
     npm install grunt-zipup --save-dev
 
@@ -50,7 +50,9 @@ The name of the application; used as the base filename for the zip file.
 
 type: grunt files object, mandatory
 
-Specifies which files to include in the output zip file. See http://gruntjs.com/configuring-tasks#files for details of the supported formats. Some examples:
+Specifies which files to include in the output zip file. See [grunt's API docs](http://gruntjs.com/configuring-tasks#files) for details of the supported formats.
+
+Some examples:
 
 *   Add three specific files to the zip file:
 
