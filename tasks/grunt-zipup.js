@@ -21,7 +21,6 @@ module.exports = function (grunt) {
     function (identifier) {
       var appName = this.data.appName;
       var version = this.data.version;
-      var files = this.data.files;
 
       if (!appName) {
         grunt.fatal('zipup task requires appName argument');
@@ -31,17 +30,12 @@ module.exports = function (grunt) {
         grunt.fatal('zipup task requires version argument (x.x.x)');
       }
 
-      if (!files) {
-        grunt.fatal('zipup task requires files argument (directory to zip)');
-      }
-
       var suffix = this.data.suffix || 'zip';
       var outDir = this.data.outDir || '.';
       var addGitCommitId = !!this.data.addGitCommitId;
 
-      // this is removed from the path of each file as it is added to the zip
-      var stripPrefix = this.data.stripPrefix || '';
-      stripPrefix = new RegExp('^' + stripPrefix);
+      // files to be added
+      var files = this.files;
 
       // ensure outDir exists and make it if not
       if (grunt.file.exists(outDir)) {
@@ -53,9 +47,6 @@ module.exports = function (grunt) {
       else {
         grunt.file.mkdir(outDir);
       }
-
-      // main
-      files = grunt.file.expand(files);
 
       var done = this.async();
 
@@ -91,6 +82,8 @@ module.exports = function (grunt) {
         return true;
       };
 
+      // infiles is a grunt files object: an array with objects
+      // which map from src to dest
       var packFiles = function (outfile, infiles, cb) {
         var zipfile = new AdmZip();
         var buffer;
@@ -98,14 +91,15 @@ module.exports = function (grunt) {
         async.forEachSeries(
           infiles,
           function (file, next) {
-            if (isFile(file)) {
-              var filename = file.replace(stripPrefix, '');
+            var src = file.src[0];
+            var dest = file.dest || src;
 
-              grunt.log.writeln('adding ' + file + ' to package as ' + filename);
+            if (isFile(src)) {
+              grunt.log.writeln('adding ' + src + ' to package as ' + dest);
 
-              buffer = fs.readFileSync(file);
+              buffer = fs.readFileSync(src);
 
-              zipfile.addFile(filename, buffer);
+              zipfile.addFile(dest, buffer);
 
               next();
             }
