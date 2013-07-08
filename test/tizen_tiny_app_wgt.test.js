@@ -57,10 +57,10 @@ describe('zipup:tizen_tiny_app_wgt', function () {
         'test/fixtures/tizen-tiny-app/**',
 
         // filter which returns only files, with the "test/fixtures"
-        // prefix removed
+        // prefix removed and '/' added at the beginning
         function (filename) {
           if (fs.statSync(filename).isFile()) {
-            return filename.replace('test/fixtures', '');
+            return filename.replace('test/fixtures/', '');
           }
           else {
             return null;
@@ -83,7 +83,7 @@ describe('zipup:tizen_tiny_app_wgt', function () {
           done(err);
         }
         else {
-          result.actual.should.have.members(result.expected);
+          result.actual.sort().should.eql(result.expected.sort());
           result.actual.length.should.equal(result.expected.length);
           done();
         }

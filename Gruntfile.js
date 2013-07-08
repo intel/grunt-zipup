@@ -70,8 +70,13 @@ module.exports = function (grunt) {
         appName: 'tizen-tiny-app',
         suffix: 'wgt',
         version: '0.1.0',
-        files: 'test/fixtures/tizen-tiny-app/**',
-        stripPrefix: 'test/fixtures',
+        files: [
+          {
+            cwd: 'test/fixtures',
+            expand: true,
+            src: 'tizen-tiny-app/**'
+          }
+        ],
         outDir: 'build'
       }
     },
