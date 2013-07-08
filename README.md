@@ -8,41 +8,35 @@ Apache version 2. See the LICENSE file for more details.
 
 # Getting started
 
-Format of the output filename is:
+grunt-zipup has been tested on:
 
-    <appName>_<version>_git@<commitID>_YYYY-MM-DD_HHMMSS_<suffix>.zip
+*   Fedora 17 Linux (64bit)
 
-The git and suffix parts are optional (see below for
-configuration).
+*   Windows 7 Enterprise (64bit)
+
+You need **Grunt ~0.4.1**.
+
+Next, install the grunt-zipup plugin in your project with:
+
+    npm install grunt-zipup --save-dev
+
+Then add a line to your <em>Gruntfile.js</em> near the top:
+
+    module.exports = function (grunt) {
+      grunt.loadNpmTasks('grunt-zipup');
+
+      // ... rest of your grunt config ...
+    };
+
+See the next section for options.
 
 # zipup task
 
-Note that it can be useful to set some of the zipup options from your <em>package.json</em>. For example, your <em>Gruntfile.js</em> might look like this:
+The zipup task produces an output zip file with a filename in the format:
 
-    grunt.initConfig({
-      packageInfo: grunt.file.readJSON('package.json'),
+    <appName>_<version>_git@<abbreviated commit ID>_YYYY-MM-DD_HHMMSS_<suffix>.zip
 
-      // ... more config ...
-
-      zipup: {
-        wgt: {
-          // set appName and version from package.json
-          appName: '<%= packageInfo.name %>',
-          version: '<%= packageInfo.version %>',
-
-          suffix: 'wgt',
-          addGitCommitId: true,
-          files: [
-            {
-              cwd: 'build/dist',
-              expand: true,
-              src: '**'
-            }
-          ],
-          outDir: 'build'
-        }
-      }
-    });
+The git and suffix parts are optional (see below for configuration).
 
 ## Options
 
@@ -123,6 +117,35 @@ For example, an output filename for <code>appName</code> "myapp" may look like:
 
 NB this requires that the <code>git</code> command be in your path.
 
+# Tips
+
+Note that it can be useful to set some of the zipup options from your <em>package.json</em>. For example, your <em>Gruntfile.js</em> might look like this:
+
+    grunt.initConfig({
+      packageInfo: grunt.file.readJSON('package.json'),
+
+      // ... more config ...
+
+      zipup: {
+        wgt: {
+          // set appName and version from package.json
+          appName: '<%= packageInfo.name %>',
+          version: '<%= packageInfo.version %>',
+
+          suffix: 'wgt',
+          addGitCommitId: true,
+          files: [
+            {
+              cwd: 'build/dist',
+              expand: true,
+              src: '**'
+            }
+          ],
+          outDir: 'build'
+        }
+      }
+    });
+
 # Full example
 
     grunt.initConfig({
@@ -155,3 +178,19 @@ In this example, the zip file will be constructed as follows:
 *   The zip file is written to the <em>build/</em> directory. An example of the output filenames produced by this configuration might be:
 
         build/TheMightyApp_0.1.0_git@41513f9_2013-07-05_133951.wgt
+
+# Contributing
+
+Please log issues on the [github issue tracker](https://github.com/01org/grunt-zipup/issues) for the project.
+
+New features or bug fixes are welcome, and should be submitted as a pull request against the <em>master</em> branch of the project.
+
+Please note that any changes you make should be accompanied by tests and documentation, and should not break the existing tests. You should also ensure that you run the <code>grunt jshint</code> task before submitting, to ensure that your code is lint free.
+
+Note that the tests for the project require grunt-mochaccino to run, which in turn requires a global installation of mocha:
+
+    npm install -g mocha
+
+You can run the project tests with:
+
+    grunt test
