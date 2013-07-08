@@ -115,11 +115,11 @@ Output directory to put the zipfile into.
 
 type: boolean, default: false
 
-If the project is a git repo, set this to <code>true</code> to include the 8 character variant of the last commit ID as part of the filename.
+If the project is a git repo, set this to <code>true</code> to include the 7 character variant of the last commit ID as part of the filename.
 
 For example, an output filename for <code>appName</code> "myapp" may look like:
 
-    myapp_git@81a131a2_2012-11-01_1151.zip
+    myapp_git@4f7fe3f_2012-11-01_1151.zip
 
 NB this requires that the <code>git</code> command be in your path.
 
@@ -154,4 +154,4 @@ In this example, the zip file will be constructed as follows:
 
 *   The zip file is written to the <em>build/</em> directory. An example of the output filenames produced by this configuration might be:
 
-        build/TheMightyApp_0.1.0_git@81a131a2_2013-07-05_133951.wgt
+        build/TheMightyApp_0.1.0_git@41513f9_2013-07-05_133951.wgt
