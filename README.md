@@ -32,8 +32,13 @@ Note that it can be useful to set some of the zipup options from your <em>packag
 
           suffix: 'wgt',
           addGitCommitId: true,
-          files: 'build/dist/**',
-          stripPrefix: 'build/dist',
+          files: [
+            {
+              cwd: 'build/dist',
+              expand: true,
+              src: '**'
+            }
+          ],
           outDir: 'build'
         }
       }
@@ -49,13 +54,44 @@ The name of the application; used as the base filename for the zip file.
 
 ### files
 
-type: string, mandatory
+type: grunt files object, mandatory
 
-File glob to select the files to zip.
+Specifies which files to include in the output zip file. See http://gruntjs.com/configuring-tasks#files for details of the supported formats. Some examples:
 
-For example, to zip the content of the build/package directory:
+*   Add three specific files to the zip file:
 
-    files: 'build/package/**'
+        files: [
+          { src: 'src/app.js' },
+          { src: 'src/data-adapter.js' },
+          { src: 'src/ui.js' }
+        ]
+
+    Note that in this case, the destination file name in the zip file will match the source file name, including its parent directory hierarchy.
+
+*   Add all files under the <em>app/src</em> and <em>app/lib</em> directories, retaining the original paths to the matching files:
+
+        file: [
+          { src: 'app/src/**, expand: true },
+          { src: 'app/src/**, expand: true },
+        ]
+
+*   Zip all files inside the <em>app/src</em> and <em>app/lib</em> directories, keeping the same hierarchy in the zip file as is under those directories:
+
+        files: [
+          { cwd: 'app/src', src: '**', expand: true },
+          { cwd: 'app/lib', src: '**', expand: true }
+        ]
+
+    Note how the <code>cwd</code> option is set so that the file paths used in the zip file are relative to those paths.
+
+*   Zip all files inside a directory, specifying a different output directory structure in the zip file:
+
+        files: [
+          { cwd: 'app/src', src: '**', expand: true, dest: 'src' },
+          { cwd: 'app/lib', src: '**', expand: true, dest: 'lib' }
+        ]
+
+    If there is a file <em>app/src/main.js</em> in the project, this is translated to <em>src/main.js</em> in the output zip file.
 
 ### version
 
@@ -74,16 +110,6 @@ The suffix for the zip file. Don't include the dot.
 type: string, default: '.'
 
 Output directory to put the zipfile into.
-
-### stripPrefix
-
-type: string, default: ''
-
-If files selects a set of directories with a hierarchy inside it, specify the prefix to strip from all paths, to remove the embedded directories.
-
-For example, if you are using the file glob <em>build/package/**</em> and want the structure of the output zip file to match the structure under the <em>build/package</em> directory, you would do:
-
-    stripPrefix: 'build/package'
 
 ### addGitCommitId
 
@@ -106,15 +132,26 @@ NB this requires that the <code>git</code> command be in your path.
           suffix: 'wgt',
           version: '0.1.0',
           addGitCommitId: true,
-          files: 'build/dist/**',
-          stripPrefix: 'build/dist',
+          files: [
+            {
+              cwd: 'build/dist',
+              src: '**',
+              expand: true
+            }
+          ],
           outDir: 'build'
         }
       }
     });
 
-In this example, we zip up the files matching <em>build/dist/**</em>. Inside the zip file, entries have the "build/dist" prefix stripped, so the zip file structure matches the structure under the <em>build/dist</em> directory. The output zipfile name also contains the latest git commit ID and has the suffix "wgt". It is written to the <em>build/</em> directory.
+In this example, the zip file will be constructed as follows:
 
-An example of the output filenames produced by this configuration might be:
+*   Files files matching <em>**</em> under the <em>build/dist</em> directory are added to the zip file.
 
-    build/TheMightyApp_0.1.0_git@81a131a2_2013-07-05_133951.wgt
+*   Inside the zip file, entries have the "build/dist" prefix stripped (as the <code>cwd</code> option is set); this means that the zip file structure will match the structure under the <em>build/dist</em> directory.
+
+*   The output zipfile name also contains the latest git commit ID and has the suffix "wgt".
+
+*   The zip file is written to the <em>build/</em> directory. An example of the output filenames produced by this configuration might be:
+
+        build/TheMightyApp_0.1.0_git@81a131a2_2013-07-05_133951.wgt
