@@ -125,10 +125,6 @@ module.exports = function (grunt) {
     }
   });
 
-  grunt.registerTask('default', [
-    'jshint',
-    'clean',
-    'zipup',
-    'mochaccino:all'
-  ]);
+  grunt.registerTask('test', ['clean', 'zipup', 'mochaccino']);
+  grunt.registerTask('default', ['jshint', 'test']);
 };

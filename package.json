@@ -4,7 +4,7 @@
   "description": "zip file generation (not extraction) from grunt",
   "main": "tasks/grunt-zipup.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "grunt mochaccino"
   },
   "repository": {
     "type": "git",
