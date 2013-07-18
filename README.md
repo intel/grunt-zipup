@@ -186,11 +186,7 @@ Note that it can be useful to set some of the zipup options from your <em>packag
 
       // ... more config ...
 
-      zipup: {'{{appName}}_{{version}}_' +
-    '{{#gitCommit}}' +
-    'git@{{gitCommit}}_' +
-    '{{/gitCommit}}' +
-    '{{datetime}}{{identifier}}.{{suffix}}'
+      zipup: {
         wgt: {
           // set appName and version from package.json
           appName: '<%= packageInfo.name %>',
