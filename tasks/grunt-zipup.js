@@ -14,27 +14,22 @@ module.exports = function (grunt) {
   var async = require('async');
   var Mustache = require('mustache');
   var AdmZip = require('adm-zip');
+  var exec = require('child_process').exec;
 
   // get the latest commit ID as an 8-character string;
   // if not a git repo, returns '' and logs an error;
   // receiver is a function with the signature receiver(err, result),
   // where err is null if no error occurred and result is the commit ID
   var gitCommitId = function (cb) {
-    grunt.util.spawn(
-      {
-        cmd: 'git',
-        args: ['log', '-n1', '--format=format:\'%h\'']
-      },
-
-      function (err, result) {
-        if (err) {
-          cb(err);
-        }
-        else {
-          cb(null, result.stdout.replace(/'/g, ''));
-        }
+    exec('git log -n1 --format=format:\'%h\'', function (err, stdout) {
+      if (err) {
+        cb(err);
       }
-    );
+      else {
+        var commitId = stdout.replace(/'/g, '');
+        cb(null, commitId);
+      }
+    });
   };
 
   // returns true if path exists and is not a directory
