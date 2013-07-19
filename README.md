@@ -286,10 +286,6 @@ Also note that any changes you make should be accompanied by tests and documenta
 
     npm install .
 
-grunt-mochaccino requires a global installation of mocha:
-
-    npm install -g mocha
-
 You can run the project tests with:
 
     grunt test
