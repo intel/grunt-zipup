@@ -30,6 +30,8 @@
     "mustache": "~0.7.2"
   },
   "devDependencies": {
+    "grunt": "~0.4.1",
+    "grunt-cli": "~0.1.9",
     "grunt-contrib-clean": "~0.4.1",
     "grunt-mochaccino": "~0.1.4",
     "chai": "~1.7.2",
