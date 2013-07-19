@@ -48,9 +48,9 @@ module.exports = function (grunt) {
 
     release: {
       options: {
-        add: false,
-        commit: false,
-        push: false,
+        add: true,
+        commit: true,
+        push: true,
 
         bump: true,
         tag: true,
