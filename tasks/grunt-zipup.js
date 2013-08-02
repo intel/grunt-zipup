@@ -6,6 +6,8 @@
  * http://www.apache.org/licenses/LICENSE-2.0
  *
  */
+var zip = require('./lib/zip');
+
 module.exports = function (grunt) {
   'use strict';
 
@@ -13,7 +15,6 @@ module.exports = function (grunt) {
   var fs = require('fs');
   var async = require('async');
   var Mustache = require('mustache');
-  var AdmZip = require('adm-zip');
   var exec = require('child_process').exec;
 
   // get the latest commit ID as an 8-character string;
@@ -47,7 +48,8 @@ module.exports = function (grunt) {
     var outDir = data.outDir;
     var zipfilename = Mustache.render(data.template, data);
     var outfile = path.join(outDir, zipfilename);
-    var zipfile = new AdmZip();
+
+    var zipfile = zip.create();
 
     async.each(
       files,
@@ -74,7 +76,7 @@ module.exports = function (grunt) {
         }
         else {
           grunt.log.writeln('\npackage written to:\n' + outfile);
-          zipfile.writeZip(outfile);
+          zipfile.writeToFile(outfile);
           cb();
         }
       }
