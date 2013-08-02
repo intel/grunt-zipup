@@ -42,7 +42,7 @@ module.exports = function (grunt) {
     return true;
   };
 
-  // infiles is a grunt files object: an array with objects
+  // files is a grunt files object: an array with objects
   // which map from src to dest
   var packFiles = function (data, files, cb) {
     var outDir = data.outDir;
@@ -60,9 +60,7 @@ module.exports = function (grunt) {
         if (isFile(src)) {
           grunt.log.writeln('adding ' + src + ' to package as ' + dest);
 
-          var buffer = fs.readFileSync(src);
-
-          zipfile.addFile(dest, buffer);
+          zipfile.addFile(src, dest);
 
           next();
         }

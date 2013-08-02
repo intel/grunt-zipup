@@ -1,19 +1,21 @@
 // wrapper for whichever zip implementation I'm using at the moment
-var AdmZip = require('adm-zip');
+var NodeZip = require('node-zip');
+var fs = require('fs');
 
 (function () {
   'use strict';
 
   var Zip = function () {
-    this.wrapped = new AdmZip();
+    this.wrapped = new NodeZip();
   };
 
-  Zip.prototype.addFile = function (path, buffer) {
-    this.wrapped.addFile(path, buffer);
+  Zip.prototype.addFile = function (src, dest) {
+    this.wrapped.file(dest, fs.readFileSync(src, 'binary'));
   };
 
   Zip.prototype.writeToFile = function (path) {
-    this.wrapped.writeZip(path);
+    var data = this.wrapped.generate({base64: false, compression: 'DEFLATE'});
+    fs.writeFileSync(path, data, 'binary');
   };
 
   module.exports = {

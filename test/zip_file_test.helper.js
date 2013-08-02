@@ -25,7 +25,11 @@ var getZipfileEntries = function (zipfileName, filenameRegex, cb) {
 
       var zipfile = new AdmZip(files[0]);
 
-      var entries = _.map(zipfile.getEntries(), function (entry) {
+      var entries = _.select(zipfile.getEntries(), function (entry) {
+        return !entry.isDirectory;
+      });
+
+      entries = _.map(entries, function (entry) {
         return entry.entryName;
       });
 
