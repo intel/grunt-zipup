@@ -1,5 +1,5 @@
 <a name="0.1.3"></a>
-### v0.1.3 (2013-0)
+### v0.1.3 (2013-08-02)
 
 *   Replace adm-zip with node-archiver
 
@@ -11,7 +11,7 @@
     extracted, and that it contains the correct content.
 
 <a name="0.1.2"></a>
-### 0.1.2 (2013-0)
+### 0.1.2 (2013-07-19)
 
 *   Use grunt-release to automatically push releases
 
