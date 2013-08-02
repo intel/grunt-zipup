@@ -18,7 +18,8 @@ describe('zipup:tizen_tiny_app_wgt', function () {
         zipfileGlob: 'build/tizen-tiny-app_0.1.0_*.wgt',
         zipfilenameRegex: /tizen-tiny-app_0.1.0_\d{4}-\d{2}-\d{2}_\d{6}\.wgt/,
         expectedFilesGlob: 'test/fixtures/tizen-tiny-app/**',
-        expectedFilesStripPrefix: 'test/fixtures/'
+        expectedFilesStripPrefix: 'test/fixtures/',
+        zipfileExtractDir: 'build/tizen-tiny-app-unzipped'
       },
       done
     );

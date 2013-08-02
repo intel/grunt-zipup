@@ -22,7 +22,8 @@ describe('zipup:custom_dest', function () {
           'custom_dest_app/lib/test2.js',
           'custom_dest_app/src/test3.js',
           'custom_dest_app/src/test4.js'
-        ]
+        ],
+        zipfileExtractDir: 'build/custom-dest-unzipped'
       },
       done
     );

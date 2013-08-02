@@ -18,7 +18,8 @@ describe('zipup:commit_id', function () {
         zipfileGlob: 'build/commit-id_0.3.0_*.zip',
         zipfilenameRegex: /commit-id_0.3.0_git@[a-z0-9]{7}_\d{4}-\d{2}-\d{2}_\d{6}\.zip/,
         expectedFilesGlob: 'test/fixtures/specific-files/**',
-        expectedFilesStripPrefix: ''
+        expectedFilesStripPrefix: '',
+        zipfileExtractDir: 'build/commit-id-unzipped'
       },
       done
     );

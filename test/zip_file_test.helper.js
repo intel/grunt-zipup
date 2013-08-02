@@ -9,6 +9,7 @@
 var AdmZip = require('adm-zip');
 var _ = require('lodash');
 var fs = require('fs');
+var path = require('path');
 var async = require('async');
 var fileHelper = require('./file.helper');
 
@@ -25,6 +26,7 @@ var getZipfileEntries = function (zipfileName, filenameRegex, cb) {
 
       var zipfile = new AdmZip(files[0]);
 
+      // only get files, not directories
       var entries = _.select(zipfile.getEntries(), function (entry) {
         return !entry.isDirectory;
       });
@@ -38,13 +40,39 @@ var getZipfileEntries = function (zipfileName, filenameRegex, cb) {
   });
 };
 
+// unzip a zip file to the specified path and get the filenames
+// under that path
+var getUnzippedFilenames = function (zipfileName, outDir, cb) {
+  if (!fs.existsSync(outDir)) {
+    fs.mkdirSync(outDir);
+  }
+
+  fileHelper(zipfileName, function (err, files) {
+    if (err) {
+      cb(err);
+    }
+    else {
+      files.length.should.equal(1);
+
+      var zipfile = new AdmZip(files[0]);
+
+      zipfile.extractAllTo(outDir, true);
+
+      // ensure that the outDir always has a trailing '/'
+      // so the leading slash is correctly removed from extracted file names
+      var stripPrefix = outDir.replace(/\/$/, '') + '/';
+
+      getExpectedFilenames(path.join(outDir, '**'), stripPrefix, cb);
+    }
+  });
+};
+
 // get the array of expected filenames
 var getExpectedFilenames = function (pattern, stripPrefix, cb) {
   fileHelper(
     pattern,
 
-    // filter which returns only files, with the "test/fixtures"
-    // prefix removed and '/' added at the beginning
+    // filter which returns only files, with the stripPrefix removed
     function (filename) {
       if (fs.statSync(filename).isFile()) {
         return filename.replace(stripPrefix, '');
@@ -63,6 +91,7 @@ var getExpectedFilenames = function (pattern, stripPrefix, cb) {
 // config.zipfileGlob: glob to find the generated zip file
 // config.zipfilenameRegex: regex to compare the generated zip file
 // name against
+// config.zipfileExtract: location to extract zip file to
 // config.expectedFilesGlob: glob pattern to get the list of files
 // expected to be inside the zip file
 // config.expectedFilesStripPrefix: prefix to strip from each file
@@ -75,28 +104,36 @@ var getExpectedFilenames = function (pattern, stripPrefix, cb) {
 module.exports = function (config, cb) {
   var zipfileGlob = config.zipfileGlob;
   var zipfilenameRegex = config.zipfilenameRegex;
+  var zipfileExtractDir = config.zipfileExtractDir;
   var expectedFiles = config.expectedFiles;
   var expectedFilesGlob = config.expectedFilesGlob;
   var expectedFilesStripPrefix = config.expectedFilesStripPrefix;
 
+  var expectedFilesList = function (asyncCb) {
+    if (expectedFilesGlob) {
+      getExpectedFilenames(expectedFilesGlob, expectedFilesStripPrefix, asyncCb);
+    }
+    else if (expectedFiles) {
+      asyncCb(null, expectedFiles);
+    }
+    else {
+      var msg = 'please specify expectedFiles or ' +
+                '(expectedFilesGlob + expectedFilesStripPrefix)';
+      asyncCb(new Error(msg));
+    }
+  };
+
   async.parallel(
     {
-      actual: function (asyncCb) {
+      actualEntries: function (asyncCb) {
         getZipfileEntries(zipfileGlob, zipfilenameRegex, asyncCb);
       },
-      expected: function (asyncCb) {
-        if (expectedFilesGlob) {
-          getExpectedFilenames(expectedFilesGlob, expectedFilesStripPrefix, asyncCb);
-        }
-        else if (expectedFiles) {
-          asyncCb(null, expectedFiles);
-        }
-        else {
-          var msg = 'please specify expectedFiles or ' +
-                    '(expectedFilesGlob + expectedFilesStripPrefix)';
-          asyncCb(new Error(msg));
-        }
-      }
+
+      actualUnzipped: function (asyncCb) {
+        getUnzippedFilenames(zipfileGlob, zipfileExtractDir, asyncCb);
+      },
+
+      expected: expectedFilesList
     },
 
     function (err, result) {
@@ -104,8 +141,10 @@ module.exports = function (config, cb) {
         cb(err);
       }
       else {
-        result.actual.sort().should.eql(result.expected.sort());
-        result.actual.length.should.equal(result.expected.length);
+        result.actualEntries.sort().should.eql(result.expected.sort());
+        result.actualEntries.length.should.equal(result.expected.length);
+        result.actualUnzipped.sort().should.eql(result.expected.sort());
+        result.actualUnzipped.length.should.equal(result.expected.length);
         cb();
       }
     }

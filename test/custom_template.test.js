@@ -18,7 +18,8 @@ describe('zipup:custom_template', function () {
         zipfileGlob: 'build/custom-template_0.5.0_*.zip',
         zipfilenameRegex: /custom-template_0.5.0_\d{6}_git@[a-z0-9]{7}_QA\.zip/,
         expectedFilesGlob: 'test/fixtures/specific-files/**',
-        expectedFilesStripPrefix: ''
+        expectedFilesStripPrefix: '',
+        zipfileExtractDir: 'build/custom-template-unzipped'
       },
       done
     );

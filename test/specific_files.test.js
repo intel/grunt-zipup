@@ -18,7 +18,8 @@ describe('zipup:specific_files', function () {
         zipfileGlob: 'build/specific-files_0.2.0_*.zip',
         zipfilenameRegex: /specific-files_0.2.0_\d{4}-\d{2}-\d{2}_\d{6}\.zip/,
         expectedFilesGlob: 'test/fixtures/specific-files/**',
-        expectedFilesStripPrefix: ''
+        expectedFilesStripPrefix: '',
+        zipfileExtractDir: 'build/specific-files-unzipped'
       },
       done
     );
