@@ -74,8 +74,7 @@ module.exports = function (grunt) {
         }
         else {
           grunt.log.writeln('\npackage written to:\n' + outfile);
-          zipfile.writeToFile(outfile);
-          cb();
+          zipfile.writeToFile(outfile, cb);
         }
       }
     );
