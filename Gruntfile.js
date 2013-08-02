@@ -127,7 +127,21 @@ module.exports = function (grunt) {
         files: [
           { src: 'test/fixtures/specific-files/**', expand: true }
         ]
-      }
+      },
+
+      adm_corrupter: {
+        appName: 'adm-corrupter',
+        suffix: 'wgt',
+        version: '1.0.0',
+        files: [
+          {
+            cwd: 'test/fixtures/adm-corrupter',
+            expand: true,
+            src: '**'
+          }
+        ],
+        outDir: 'build'
+      },
     },
 
     mochaccino: {
