@@ -49,32 +49,31 @@ module.exports = function (grunt) {
     var zipfilename = Mustache.render(data.template, data);
     var outfile = path.join(outDir, zipfilename);
 
-    var zipfile = zip.create();
+    var zipfile = zip.create(outfile);
 
-    async.each(
+    async.eachSeries(
       files,
+
       function (file, next) {
         var src = file.src[0];
         var dest = file.dest || src;
 
         if (isFile(src)) {
           grunt.log.writeln('adding ' + src + ' to package as ' + dest);
-
-          zipfile.addFile(src, dest);
-
-          next();
+          zipfile.addFile(src, dest, next);
         }
         else {
           next();
         }
       },
+
       function (err) {
         if (err) {
           grunt.fatal(err.message);
         }
         else {
           grunt.log.writeln('\npackage written to:\n' + outfile);
-          zipfile.writeToFile(outfile, cb);
+          zipfile.writeToFile(cb);
         }
       }
     );

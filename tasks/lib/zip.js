@@ -5,27 +5,28 @@ var archiver = require('archiver');
 (function () {
   'use strict';
 
-  var Zip = function () {
+  var Zip = function (outfile) {
     this.wrapped = archiver('zip');
+    var out = fs.createWriteStream(outfile);
+    this.wrapped.pipe(out);
 
     this.wrapped.on('error', function (err) {
       throw err;
     });
   };
 
-  Zip.prototype.addFile = function (src, dest) {
-    this.wrapped.append(fs.readFileSync(src), { name: dest });
+  Zip.prototype.addFile = function (src, dest, cb) {
+    var buf = fs.readFileSync(src);
+    this.wrapped.append(buf, { name: dest }, cb);
   };
 
   Zip.prototype.writeToFile = function (path, cb) {
-    var out = fs.createWriteStream(path);
-    this.wrapped.pipe(out);
     this.wrapped.finalize(cb);
   };
 
   module.exports = {
-    create: function () {
-      return new Zip();
+    create: function (outfile) {
+      return new Zip(outfile);
     }
   };
 })();
