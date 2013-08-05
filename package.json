@@ -1,6 +1,6 @@
 {
   "name": "grunt-zipup",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "zip file generation (not extraction) from grunt",
   "main": "tasks/grunt-zipup.js",
   "scripts": {
