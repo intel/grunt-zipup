@@ -1,5 +1,12 @@
+<a name="0.1.4"></a>
+### 0.1.4 (2013-08-05)
+
+*   Fix issues where zip files were occasionally corrupted
+    because streams reading from the files into the output
+    zip were not being appended correctly.
+
 <a name="0.1.3"></a>
-### v0.1.3 (2013-08-02)
+### 0.1.3 (2013-08-02)
 
 *   Replace adm-zip with node-archiver
 
