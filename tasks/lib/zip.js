@@ -20,7 +20,7 @@ var archiver = require('archiver');
     this.wrapped.append(buf, { name: dest }, cb);
   };
 
-  Zip.prototype.writeToFile = function (path, cb) {
+  Zip.prototype.writeToFile = function (cb) {
     this.wrapped.finalize(cb);
   };
 

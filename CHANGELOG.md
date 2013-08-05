@@ -1,3 +1,9 @@
+<a name="0.1.5"></a>
+### 0.1.5 (2013-08-05)
+
+*   Fixed a bug where the multitask was not executing
+    because the callback was not being invoked.
+
 <a name="0.1.4"></a>
 ### 0.1.4 (2013-08-05)
 

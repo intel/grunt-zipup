@@ -141,7 +141,7 @@ module.exports = function (grunt) {
           }
         ],
         outDir: 'build'
-      },
+      }
     },
 
     mochaccino: {
@@ -153,5 +153,5 @@ module.exports = function (grunt) {
   });
 
   grunt.registerTask('test', ['clean', 'zipup', 'mochaccino']);
-  grunt.registerTask('default', ['jshint', 'test']);
+  grunt.registerTask('default', ['test']);
 };

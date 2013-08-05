@@ -51,7 +51,7 @@ module.exports = function (grunt) {
 
     var zipfile = zip.create(outfile);
 
-    async.eachSeries(
+    async.each(
       files,
 
       function (file, next) {
@@ -84,14 +84,14 @@ module.exports = function (grunt) {
     'zipup',
     'Zip files with custom zipfile name',
     function (identifier) {
+      var done = this.async();
+
       // default template for the filename
       var defaultTemplate = '{{appName}}_{{version}}_' +
                             '{{#gitCommit}}' +
                             'git@{{gitCommit}}_' +
                             '{{/gitCommit}}' +
                             '{{datetime}}{{identifier}}.{{suffix}}';
-
-      var done = this.async();
 
       // set defaults for task options if not present
       var data = this.data;
