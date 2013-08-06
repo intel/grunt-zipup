@@ -1,3 +1,10 @@
+<a name="0.1.6"></a>
+### 0.1.6 (2013-08-06)
+
+*   Switch to moxie-zip, which seems to reliably fix
+    zip file corruption issues I was seeing with other
+    libraries (archiver and zipstream).
+
 <a name="0.1.5"></a>
 ### 0.1.5 (2013-08-05)
 
