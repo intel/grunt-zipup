@@ -27,7 +27,7 @@
   "dependencies": {
     "async": "~0.2.9",
     "mustache": "~0.7.2",
-    "archiver": "~0.4.6"
+    "moxie-zip": "0.0.2"
   },
   "devDependencies": {
     "grunt": "~0.4.1",
