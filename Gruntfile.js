@@ -6,12 +6,16 @@
  * http://www.apache.org/licenses/LICENSE-2.0
  *
  */
+var path = require('path');
+
 module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-release');
   grunt.loadNpmTasks('grunt-mochaccino');
   grunt.loadTasks('tasks');
+
+  var fixtureDir = './build/empty-files-fixture';
 
   grunt.initConfig({
     jshint: {
@@ -141,6 +145,20 @@ module.exports = function (grunt) {
           }
         ],
         outDir: 'build'
+      },
+
+      empty_files: {
+        appName: 'empty-files',
+        suffix: 'zip',
+        version: '1.0.0',
+        files: [
+          {
+            cwd: fixtureDir,
+            expand: true,
+            src: '**'
+          }
+        ],
+        outDir: 'build'
       }
     },
 
@@ -152,6 +170,27 @@ module.exports = function (grunt) {
     }
   });
 
-  grunt.registerTask('test', ['clean', 'zipup', 'mochaccino']);
+  // set up fixtures for testing which cannot be added to the repo,
+  // e.g. zipping empty files
+  grunt.registerTask('setup-fixtures', function () {
+    if (grunt.file.exists(fixtureDir)) {
+      grunt.file.delete(fixtureDir);
+    }
+
+    grunt.file.mkdir(fixtureDir);
+
+    // add one file with content
+    var nonEmptyFile = path.join(fixtureDir, 'CONTENT');
+    grunt.file.write(nonEmptyFile, 'I am not empty');
+
+    // add two empty files; we do this here as empty files won't
+    // be included in git commits
+    var emptyFile1 = path.join(fixtureDir, 'EMPTY-FILE-1');
+    var emptyFile2 = path.join(fixtureDir, 'EMPTY-FILE-2');
+    grunt.file.write(emptyFile1, '');
+    grunt.file.write(emptyFile2, '');
+  });
+
+  grunt.registerTask('test', ['clean', 'setup-fixtures', 'zipup', 'mochaccino']);
   grunt.registerTask('default', ['jshint', 'test']);
 };

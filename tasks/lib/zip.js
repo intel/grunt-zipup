@@ -14,6 +14,11 @@ var ZipWriter = require('moxie-zip').ZipWriter;
     cb();
   };
 
+  Zip.prototype.addDirectory = function (dest, cb) {
+    this.wrapped.addDir(dest);
+    cb();
+  };
+
   Zip.prototype.writeToFile = function (cb) {
     this.wrapped.saveAs(this.outfile, function () {
       cb();
