@@ -27,7 +27,7 @@
   "dependencies": {
     "async": "~0.2.9",
     "mustache": "~0.7.2",
-    "moxie-zip": "0.0.2"
+    "moxie-zip": "git+https://github.com/townxelliot/moxie-zip.git"
   },
   "devDependencies": {
     "grunt": "~0.4.1",
