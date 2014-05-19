@@ -241,6 +241,39 @@ You can also provide a place for the identifier in your own custom template:
 
 In situations where you don't supply an identifier, it is set to the empty string '' by default. If you do provide an identifier, it is automatically prefixed with '_', so you don't need to put that in your template.
 
+## Using zipup task data
+
+The data used by the zipup task is retained on the `grunt.zipup` object, so it can be used by other tasks. This could be useful to get a handle on the name of the output zip file (for example), so you can reuse it in other tasks.
+
+As an example of how to use it, the zipup project itself will print the data for one of the tasks when you run the `test` target, i.e.
+
+    grunt test
+
+Here's an example of the output:
+
+    {
+      "appName": "commit-id",
+      "version": "0.3.0",
+      "addGitCommitId": true,
+      "files": [
+        {
+          "src": [
+            "test/fixtures/specific-files/**"
+          ],
+          "expand": true
+        }
+      ],
+      "outDir": "build",
+      "identifier": "",
+      "datetime": "2014-05-19_171011",
+      "suffix": "zip",
+      "template": "{{appName}}_{{version}}_{{#gitCommit}}git@{{gitCommit}}_{{/gitCommit}}{{datetime}}{{identifier}}.{{suffix}}",
+      "gitCommit": "0cfe23f",
+      "outfile": "build/commit-id_0.3.0_git@0cfe23f_2014-05-19_171011.zip"
+    }
+
+Note the `outfile` property, which gives the path to the output zip file (relative to the Gruntfile).
+
 # Annotated example
 
     grunt.initConfig({

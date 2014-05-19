@@ -56,6 +56,9 @@ module.exports = function (grunt) {
     var zipfilename = Mustache.render(data.template, data);
     var outfile = path.join(outDir, zipfilename);
 
+    // store the output zip file name on the task data
+    data.outfile = outfile;
+
     var zipfile = zip.create(outfile);
 
     async.each(
@@ -96,6 +99,11 @@ module.exports = function (grunt) {
     'zipup',
     'Zip files with custom zipfile name',
     function (identifier) {
+      // store the task details on the grunt.zipup object,
+      // keyed by the target name
+      grunt.zipup = grunt.zipup || {};
+      grunt.zipup[this.target] = this.data;
+
       var done = this.async();
 
       // default template for the filename

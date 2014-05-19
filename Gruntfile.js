@@ -191,6 +191,11 @@ module.exports = function (grunt) {
     grunt.file.write(emptyFile2, '');
   });
 
-  grunt.registerTask('test', ['clean', 'setup-fixtures', 'zipup', 'mochaccino']);
+  grunt.registerTask('print-data-for-target', function () {
+    grunt.log.ok('Printing data for the zipup commit_id target');
+    grunt.log.write(JSON.stringify(grunt.zipup.commit_id, null, 2));
+  });
+
+  grunt.registerTask('test', ['clean', 'setup-fixtures', 'zipup', 'mochaccino', 'print-data-for-target']);
   grunt.registerTask('default', ['jshint', 'test']);
 };
