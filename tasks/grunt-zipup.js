@@ -35,11 +35,18 @@ module.exports = function (grunt) {
 
   // returns true if path exists and is not a directory
   var isFile = function (path) {
-    if (!fs.existsSync(path) || fs.statSync(path).isDirectory()) {
-      return false;
+    if (fs.existsSync(path) && !fs.statSync(path).isDirectory()) {
+      return true;
     }
+    return false;
+  };
 
-    return true;
+  // returns true if path exists and is a directory
+  var isDirectory = function (path) {
+    if (fs.existsSync(path) && fs.statSync(path).isDirectory()) {
+      return true;
+    }
+    return false;
   };
 
   // files is a grunt files object: an array with objects
@@ -59,8 +66,13 @@ module.exports = function (grunt) {
         var dest = file.dest || src;
 
         if (isFile(src)) {
-          grunt.log.writeln('adding ' + src + ' to package as ' + dest);
+          grunt.log.writeln('adding file ' + src + ' to package as ' + dest);
           zipfile.addFile(src, dest, next);
+        }
+        // screen out the '.' directory to avoid a spurious entry
+        else if (isDirectory(src) && dest !== '.') {
+          grunt.log.writeln('adding directory ' + src + ' to package as ' + dest);
+          zipfile.addDirectory(dest, next);
         }
         else {
           next();

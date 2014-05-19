@@ -13,7 +13,7 @@ var path = require('path');
 var async = require('async');
 var fileHelper = require('./file.helper');
 
-// get the entries in the zipfile and test zip file name matches
+// get the (file) entries in the zipfile and test zip file name matches
 // filenameRegex
 var getZipfileEntries = function (zipfileName, filenameRegex, cb) {
   fileHelper(zipfileName, function (err, files) {
@@ -72,14 +72,11 @@ var getExpectedFilenames = function (pattern, stripPrefix, cb) {
   fileHelper(
     pattern,
 
-    // filter which returns only files, with the stripPrefix removed
+    // filter which returns files with stripPrefix removed
     function (filename) {
-      if (fs.statSync(filename).isFile()) {
+      if (!fs.statSync(filename).isDirectory()) {
         return filename.replace(stripPrefix, '');
       }
-      else {
-        return null;
-      };
     },
 
     cb
