@@ -297,7 +297,7 @@ Note the `outfile` property, which gives the path to the output zip file (relati
 
 In this example, the zip file will be constructed as follows:
 
-*   Files files matching <em>**</em> under the <em>build/dist</em> directory are added to the zip file.
+*   Files matching <em>**</em> under the <em>build/dist</em> directory are added to the zip file.
 
 *   Inside the zip file, entries have the "build/dist" prefix stripped (as the <code>cwd</code> option is set); this means that the zip file structure will match the structure under the <em>build/dist</em> directory.
 
